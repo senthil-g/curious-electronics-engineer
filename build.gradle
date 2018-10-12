@@ -1,0 +1,89 @@
+buildscript {    // Configuration for building
+  ext {
+    appenginePluginVersion = '1.3.5'
+    springBootVersion = '2.0.5.RELEASE'
+  }
+  repositories {
+    jcenter()    // Bintray's repository - a fast Maven Central mirror & more
+    mavenCentral()
+  }
+  dependencies {
+    classpath "com.google.cloud.tools:appengine-gradle-plugin:${appenginePluginVersion}"    // Latest 1.x.x release
+    classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+  }
+}
+
+repositories {   // repositories for Jar's you access in your code
+  maven {
+    url 'https://oss.sonatype.org/content/repositories/snapshots' // SNAPSHOT repository (if needed)
+  }
+  mavenCentral()
+  jcenter()
+}
+
+apply plugin: 'java'                              // standard Java tasks
+apply plugin: 'war'                               // standard Web Archive plugin
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'com.google.cloud.tools.appengine'  // App Engine tasks
+
+dependencies {
+
+  ext {
+    appengineSdkVersion = '1.9.64'
+    springVersion = '5.0.9.RELEASE'
+    springBootVersion = '2.0.5.RELEASE'
+  }
+
+  compile "com.google.appengine:appengine-api-1.0-sdk:${appengineSdkVersion}"  // Latest App Engine Api's
+  providedCompile "javax.servlet:javax.servlet-api:3.1.0"
+
+  compile 'jstl:jstl:1.2'
+  compile("org.springframework.boot:spring-boot-starter:${springBootVersion}")
+  compile("org.springframework.boot:spring-boot-starter-json:${springBootVersion}")
+  compile("org.springframework:spring-web:${springVersion}")
+  compile("org.springframework:spring-webmvc:${springVersion}")
+  compile 'org.json:json:20180813'
+
+  testCompile 'junit:junit:4.12'
+  testCompile 'com.google.truth:truth:0.33'
+  testCompile 'org.mockito:mockito-all:1.10.19'
+
+  testCompile "com.google.appengine:appengine-testing:${appengineSdkVersion}"
+  testCompile "com.google.appengine:appengine-api-stubs:${appengineSdkVersion}"
+  testCompile "com.google.appengine:appengine-tools-sdk:${appengineSdkVersion}"
+  testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
+}
+
+// Always run unit tests
+appengineDeploy.dependsOn test
+appengineStage.dependsOn test
+
+appengine {  // App Engine tasks configuration
+  deploy {   // deploy configuration
+    stopPreviousVersion = true  // default - stop the current version
+    promote = true // default - makes above version default
+    version = "beta"
+  }
+}
+
+test {
+  useJUnit()
+  testLogging.showStandardStreams = true
+  beforeTest { descriptor ->
+     logger.lifecycle("test: " + descriptor + "  Running")
+  }
+
+  onOutput { descriptor, event ->
+     logger.lifecycle("test: " + descriptor + ": " + event.message )
+  }
+  afterTest { descriptor, result ->
+    logger.lifecycle("test: " + descriptor + ": " + result )
+  }
+}
+
+group   = "com.example.appenginej8"        // Generated output GroupId
+version = "1.0-SNAPSHOT"       // Version in generated output
+
+sourceCompatibility = 1.8     // App Engine Flexible uses Java 8
+targetCompatibility = 1.8     // App Engine Flexible uses Java 8
