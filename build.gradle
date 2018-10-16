@@ -33,15 +33,15 @@ dependencies {
   compile "com.google.appengine:appengine-api-1.0-sdk:${appengineSdkVersion}"  // Latest App Engine Api's
   providedCompile "javax.servlet:javax.servlet-api:3.1.0"
 
-  compile 'jstl:jstl:1.2'
-  compile 'org.json:json:20180813'
-  compile 'joda-time:joda-time:2.10'
-  compile 'com.google.appengine.tools:appengine-gcs-client:0.8'
-  compile 'commons-fileupload:commons-fileupload:1.3.3'
+  compile group: 'jstl', name: 'jstl', version: '1.2'
+  compile group: 'org.json',name: 'json', version: '20180813'
+  compile group: 'joda-time',name: 'joda-time', version: '2.10'
+  compile group: 'com.google.appengine.tools', name: 'appengine-gcs-client', version: '0.8'
+  compile group: 'commons-fileupload', name: 'commons-fileupload', version: '1.3.3'
 
-  testCompile 'junit:junit:4.12'
-  testCompile 'com.google.truth:truth:0.33'
-  testCompile 'org.mockito:mockito-all:1.10.19'
+  testCompile group: 'junit', name: 'junit', version: '4.12'
+  testCompile group: 'com.google.truth', name: 'truth', version: '0.33'
+  testCompile group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
 
   testCompile "com.google.appengine:appengine-testing:${appengineSdkVersion}"
   testCompile "com.google.appengine:appengine-api-stubs:${appengineSdkVersion}"
