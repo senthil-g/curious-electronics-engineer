@@ -8,10 +8,15 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "HelloWorld", urlPatterns = "/HelloWorld")
-public class HelloWorld extends HttpServlet {
+@WebServlet(name = "Navigator", urlPatterns = "/*")
+public class Navigator extends HttpServlet {
     @Override
-    protected void doGet(HttpServletRequest reqest, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.getWriter().println("Hello" + (request.getPathInfo() != null && request.getPathInfo().trim() != "/" ? request.getPathInfo().replace("/", " ") : " World!"));
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.getWriter().println("Hello World!");
     }
 
