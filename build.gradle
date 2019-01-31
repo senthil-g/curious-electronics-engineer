@@ -41,11 +41,9 @@ dependencies {
   compile 'com.google.apis:google-api-services-sheets:v4-rev553-1.25.0'
   compile 'com.google.auth:google-auth-library-appengine:0.13.0'
 
-
-
-  testCompile 'junit:junit:4.12'
-  testCompile 'com.google.truth:truth:0.33'
-  testCompile 'org.mockito:mockito-all:1.10.19'
+  testCompile group: 'junit', name: 'junit', version: '4.12'
+  testCompile group: 'com.google.truth', name: 'truth', version: '0.33'
+  testCompile group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
 
   testCompile "com.google.appengine:appengine-testing:${appengineSdkVersion}"
   testCompile "com.google.appengine:appengine-api-stubs:${appengineSdkVersion}"
