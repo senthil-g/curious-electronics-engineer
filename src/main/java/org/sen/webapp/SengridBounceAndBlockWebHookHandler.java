@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -27,6 +28,11 @@ import org.json.JSONObject;
 public class SengridBounceAndBlockWebHookHandler extends HttpServlet
     {
         private static Logger logger = Logger.getLogger( SengridBounceAndBlockWebHookHandler.class.getName() );
+
+        static final ResourceBundle resourceBundle = ResourceBundle.getBundle( "Resources" );
+
+        static final String SpreadSheetId = resourceBundle.getString( "sendgrid.report.googlesheet.id" );
+
 
         private static Map <String , Integer> sendGridWebhookPropertyMap = new HashMap <String , Integer>()
             {
@@ -51,7 +57,7 @@ public class SengridBounceAndBlockWebHookHandler extends HttpServlet
                 Object requestData = getRequestBody( req.getInputStream() , req.getContentType() );
                 try
                     {
-                        AccessGoogleSheetsHelper.writeDataToSheet( "1Z3Ykp0oLeSB6xyoPcPuXKdLrAqmuRwWor7xkJhbfg4Y" , "Sheet1" ,
+                        AccessGoogleSheetsHelper.writeDataToSheet( SpreadSheetId , "Sheet1" ,
                                 convertToListRows( requestData ) );
                     }
                 catch ( Exception exception )
