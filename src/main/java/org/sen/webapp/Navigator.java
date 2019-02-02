@@ -8,11 +8,12 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "Navigator", urlPatterns = "/*")
+@WebServlet(name = "Navigator", urlPatterns = {"/home","/home/*"})
 public class Navigator extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.getWriter().println("Hello" + (request.getPathInfo() != null && request.getPathInfo().trim() != "/" ? request.getPathInfo().replace("/", " ") : " World!"));
+        response.setContentType("text/html");
+        response.sendRedirect("/pages/index.html");
     }
 
     @Override
