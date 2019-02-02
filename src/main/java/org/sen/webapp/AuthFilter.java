@@ -15,7 +15,7 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
-@WebFilter("/*")
+@WebFilter("/authFilter")
 public class AuthFilter implements Filter {
 
     private static final Logger logger = Logger.getLogger(AuthFilter.class.getName());
