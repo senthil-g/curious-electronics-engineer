@@ -10,5 +10,6 @@
   <!-- <public-root>/static</public-root> -->
   <static-files>
     <include path="/static/*" expiration="4d 5h" />
+    <include path="/static/*/*" expiration="4d 5h" />
   </static-files>
 </appengine-web-app>
