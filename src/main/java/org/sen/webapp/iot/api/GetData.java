@@ -23,7 +23,7 @@ import org.sen.webapp.utilities.Convert;
 
 @SuppressWarnings( "serial" )
 @WebServlet( name = "GetData" , urlPatterns =
-    { "/getData" } )
+    { "/iot/getData" } )
 public class GetData extends HttpServlet
     {
         private static Logger logger = Logger.getLogger( GetData.class.getName() );
@@ -34,18 +34,22 @@ public class GetData extends HttpServlet
                 factory().register( SensorData.class );
                 JSONArray sensorDataList = new JSONArray();
                 JSONObject responseObject = new JSONObject();
-                Query<SensorData> query = ofy().load().type( SensorData.class ).order("timestamp").limit( 10 );
-                String cursorStr = req.getParameter("cursorString");
-                if (cursorStr != null)
-                    query = query.endAt(Cursor.fromWebSafeString(cursorStr));
+                String receivedTimestamp = req.getParameter("lastTimestamp");
+                if(receivedTimestamp == null)
+                    receivedTimestamp = String.valueOf(System.currentTimeMillis() - (60 * 1000));
+                Long timestamp = Long.valueOf(receivedTimestamp);
+                Query<SensorData> query = ofy().load().type( SensorData.class ).order("timestamp").filter("timestamp >", timestamp).limit( 10 );
+                String newTimestamp = "";
                 QueryResultIterator<SensorData> iterator = query.iterator();
-                Cursor cursor = iterator.getCursor();
-                responseObject.put("cursorString", cursor.toWebSafeString());
                 while (iterator.hasNext()) {
                     SensorData sensorData = iterator.next();
                     try
                         {
-                            sensorDataList.put( Convert.convertToJSONObject( sensorData ) );
+                            JSONObject jsonObject = Convert.convertToJSONObject( sensorData );
+                            sensorDataList.put( jsonObject );
+                            if(newTimestamp.equals("")){
+                                responseObject.put("lastTimestamp", String.valueOf(jsonObject.getLong("timestamp")));
+                             }
                         }
                     catch ( Exception e )
                         {

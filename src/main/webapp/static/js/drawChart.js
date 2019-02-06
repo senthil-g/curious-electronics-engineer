@@ -1,12 +1,12 @@
 $(document).ready(() => {
-    let cursorString = "";
+    let lastTimestamp = "";
     charts = new Object();
     window.setInterval(() => {
         $.ajax({
-            url: "/getData" + (cursorString != "" ?("?cursorString=" + cursorString) : ""),
+            url: "/iot/getData" + (lastTimestamp != "" ?("?lastTimestamp=" + lastTimestamp) : ""),
             success: (receivedData) => {
                 populateData(receivedData.data.reverse());
-                cursorString = receivedData.cursorString ? receivedData.cursorString : cursorString;
+                lastTimestamp = receivedData.lastTimestamp ? receivedData.lastTimestamp : lastTimestamp;
             }
         });
     }, 500);
@@ -23,7 +23,7 @@ $(document).ready(() => {
         ['temperature', 'humidity', 'pH', 'conductivity'].forEach((type) => {
             var dataToPopulate = dataMap.get(type);
             var timestamp = dataMap.get('timestamp');
-            cursorString == "" || $.isEmptyObject(charts) ? drawGraph(type, dataToPopulate, timestamp) : reDrawGraph(type, dataToPopulate, timestamp);
+            lastTimestamp == "" || $.isEmptyObject(charts) ? drawGraph(type, dataToPopulate, timestamp) : reDrawGraph(type, dataToPopulate, timestamp);
         });
     }
     let drawGraph = (type, data, timestamp) => {
@@ -34,7 +34,7 @@ $(document).ready(() => {
             data: {
                 labels: timestamp.map(milliseconds => convertToTimeString(milliseconds)),
                 datasets: [{
-                    label: type.charAt(0).toUpperCase() + type.slice(1),
+                    label: type.charAt(0).toUpperCase() + type.slice(1) + (normalizedData.length > 0 ? displayValues(normalizedData[normalizedData.length - 1], type) : ""),
                     data: normalizedData,
                     borderWidth: 3
                 }]
@@ -67,10 +67,25 @@ $(document).ready(() => {
         }
         charObject.data.datasets[0].data = dataToBeModified.concat(data);
         charObject.data.labels = timestampDataToBeModified.concat(timestamp.map(milliseconds => convertToTimeString(milliseconds)));
+        charObject.data.datasets[0].label = type.charAt(0).toUpperCase() + type.slice(1) + (normalizedData.length > 0 ? displayValues(normalizedData[normalizedData.length - 1], type) : "");
         charObject.update();
     }
     let convertToTimeString = (milliseconds) => {
         var date = new Date(milliseconds);
         return (date.getHours() > 12 ? (date.getHours() - 12) : date.getHours()) + ":" + date.getMinutes() + ":" + date.getSeconds() + " " + (date.getHours() > 12 ? "PM" : "AM");
+    }
+    let displayValues = (value, type) => {
+        let returnValue = "";
+        if(value == 'null' || value == null)
+            value = "";
+        if(type == 'temperature')
+            returnValue = " " + value + "C";
+        else if(type == 'humidity')
+            returnValue = " " + value + "%";
+        else if(type == 'pH')
+            returnValue = " " + value;
+        else if(type == 'conductivity')
+            returnValue = " " + value + "mho";
+        return returnValue;
     }
 });

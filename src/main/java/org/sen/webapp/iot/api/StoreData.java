@@ -18,7 +18,7 @@ import org.sen.webapp.utilities.Convert;
 
 @SuppressWarnings( "serial" )
 @WebServlet( name = "StoreData" , urlPatterns =
-    { "/storeData" } )
+    { "/iot/storeData" } )
 public class StoreData extends HttpServlet
     {
         Logger logger = Logger.getLogger( StoreData.class.getName() );
@@ -26,7 +26,6 @@ public class StoreData extends HttpServlet
         @Override
         protected void doPost( HttpServletRequest req , HttpServletResponse resp ) throws ServletException , IOException
             {
-                logger.info( "Request received!" );
                 JSONObject sensorData = (JSONObject) Convert.getRequestBody( req.getInputStream() , req.getContentType() );
                 factory().register( SensorData.class );
                 ofy().save().entities( Convert.convertToJavaObject( sensorData ) ).now();
