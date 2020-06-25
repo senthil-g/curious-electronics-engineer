@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URLDecoder;
+import java.util.logging.Logger;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -15,6 +17,8 @@ import org.sen.webapp.iot.dao.SensorData;
 
 public class Convert
     {
+        private static final Logger logger = Logger.getLogger( Convert.class.getName() );
+
         public static Object getRequestBody( InputStream inputStream , String contentType ) throws IOException
             {
                 BufferedReader bufferedReader = new BufferedReader( new InputStreamReader( inputStream ) );
@@ -24,12 +28,15 @@ public class Convert
                     {
                         stringBuilder.append( line );
                     }
-                String resultString = stringBuilder.toString();
+                String encodedString = stringBuilder.toString();
+                String resultString = URLDecoder.decode( encodedString , "UTF-8" );
                 if ( isNotNullOrEmpty( contentType ) )
                     {
                         if ( contentType.contains( "/" ) )
                             {
                                 String type = contentType.split( "/" ) [1];
+                                if ( type.contains( ";" ) )
+                                    type = type.split( ";" ) [0];
                                 return convertToType( resultString , type );
                             }
                         else
